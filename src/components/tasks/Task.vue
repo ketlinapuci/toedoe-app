@@ -27,7 +27,7 @@
       </div>
       <!-- <div class="task-date">24 Feb 12:00</div> -->
     </div>
-    <TaskActions @edit="isEdit = true" v-show="!isEdit" />
+    <TaskActions @edit="isEdit = true" v-show="!isEdit" @remove="removeTask" />
   </li>
 </template>
 
@@ -39,7 +39,7 @@ const props = defineProps({
   task: Object,
 });
 
-const emit = defineEmits(["updated", "completed"]);
+const emit = defineEmits(["updated", "completed", "removed"]);
 
 const isEdit = ref(false);
 const editingTask = ref(props.task.name);
@@ -52,21 +52,27 @@ const vFocus = {
 };
 
 const updateTask = (event) => {
-    const updatedTask = { ...props.task, name: event.target.value };
-    isEdit.value = false;
-    emit("updated", updatedTask);
+  const updatedTask = { ...props.task, name: event.target.value };
+  isEdit.value = false;
+  emit("updated", updatedTask);
 };
 
 const markTaskAsCompleted = (event) => {
-    const updatedTask = {
-        ...props.task,
-        is_completed: !props.task.is_completed,
-    };
-    emit("completed", updatedTask);
+  const updatedTask = {
+    ...props.task,
+    is_completed: !props.task.is_completed,
+  };
+  emit("completed", updatedTask);
 };
 
 const undo = () => {
-    isEdit.value = false;
-    editingTask.value = props.task.name;
+  isEdit.value = false;
+  editingTask.value = props.task.name;
+};
+
+const removeTask = () => {
+    if (confirm("Are you sure?")) {
+        emit("removed", props.task);
+    }
 };
 </script>
