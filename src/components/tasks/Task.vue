@@ -3,13 +3,13 @@
     <div class="d-flex justify-content-start align-items-center">
       <input
         class="form-check-input mt-0"
-        :class="completedClass"
         type="checkbox"
+        :class="completedClass"
         :checked="task.is_completed"
+        @change="markTaskAsCompleted"
       />
       <div
         class="ms-2 flex-grow-1"
-        :class="completedClass"
         title="Double click the text to edit or remove"
         @dblclick="isEdit = true"
       >
@@ -39,7 +39,7 @@ const props = defineProps({
   task: Object,
 });
 
-const emit = defineEmits(["updated"]);
+const emit = defineEmits(["updated", "completed"]);
 
 const isEdit = ref(false);
 const editingTask = ref(props.task.name);
@@ -55,6 +55,14 @@ const updateTask = (event) => {
     const updatedTask = { ...props.task, name: event.target.value };
     isEdit.value = false;
     emit("updated", updatedTask);
+};
+
+const markTaskAsCompleted = (event) => {
+    const updatedTask = {
+        ...props.task,
+        is_completed: !props.task.is_completed,
+    };
+    emit("completed", updatedTask);
 };
 
 const undo = () => {
